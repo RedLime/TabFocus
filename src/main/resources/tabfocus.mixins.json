@@ -4,12 +4,11 @@
   "package": "com.redlimerl.tabfocus.mixins",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
-    "widget.ButtonWidgetMixin",
+  ],
+  "client": [
     "CreateWorldScreenMixin",
     "ScreenMixin",
     "widget.TextFieldWidgetMixin"
-  ],
-  "client": [
   ],
   "injectors": {
     "defaultRequire": 1

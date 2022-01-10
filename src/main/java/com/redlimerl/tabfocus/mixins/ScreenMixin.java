@@ -1,5 +1,6 @@
 package com.redlimerl.tabfocus.mixins;
 
+import com.redlimerl.tabfocus.TabFocus;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.gui.screen.Screen;
@@ -79,6 +80,7 @@ public abstract class ScreenMixin {
 
     @Redirect(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/widget/ButtonWidget;render(Lnet/minecraft/client/MinecraftClient;II)V"))
     public void buttonRender(ButtonWidget instance, MinecraftClient client, int mouseX, int mouseY) {
+        if (!TabFocus.drawableHelpers.contains(instance)) TabFocus.drawableHelpers.add(instance);
         if (FOCUSED_BUTTON_ORDER != -1 && instance.id == FOCUSED_BUTTON_ID) {
             instance.render(client, instance.x, instance.y);
         } else {
