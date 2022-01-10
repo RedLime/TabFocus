@@ -8,6 +8,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
 import static com.redlimerl.tabfocus.TabFocus.FOCUSED_BUTTON_ORDER;
+import static com.redlimerl.tabfocus.TabFocus.drawableHelpers;
 
 @Mixin(CreateWorldScreen.class)
 public abstract class CreateWorldScreenMixin {
@@ -15,7 +16,7 @@ public abstract class CreateWorldScreenMixin {
 
     @Redirect(method = "keyPressed", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/world/CreateWorldScreen;buttonClicked(Lnet/minecraft/client/gui/widget/ButtonWidget;)V"))
     public void buttonClickedRedirect(CreateWorldScreen instance, ButtonWidget button) {
-        if (FOCUSED_BUTTON_ORDER == -1) {
+        if (FOCUSED_BUTTON_ORDER == -1 && drawableHelpers.size() > 0) {
             this.buttonClicked(button);
         }
     }

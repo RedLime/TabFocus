@@ -1,7 +1,6 @@
 package com.redlimerl.tabfocus.mixins;
 
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
@@ -18,27 +17,22 @@ import static com.redlimerl.tabfocus.TabFocus.*;
 
 @Mixin(Screen.class)
 public abstract class ScreenMixin {
-    @Shadow protected TextRenderer textRenderer;
 
     @Shadow protected abstract void buttonClicked(ButtonWidget button);
 
     @Shadow protected MinecraftClient client;
-
-    @Shadow private ButtonWidget prevClickedButton;
 
     @Inject(method = "handleKeyboard", at = @At("HEAD"))
     public void onKeyPressed(CallbackInfo ci) {
         if (Keyboard.getEventKeyState()) {
             int keyCode = Keyboard.getEventKey();
             if (keyCode == 15
-                    && drawableHelpers.stream().noneMatch(this::isHoveredButtonByMouse)
                     && drawableHelpers.stream().anyMatch(this::isSelectableWidget)) {
                 while (true) {
                     FOCUSED_BUTTON_ORDER = (FOCUSED_BUTTON_ORDER + 1) % drawableHelpers.size();
                     DrawableHelper drawableHelper = drawableHelpers.get(FOCUSED_BUTTON_ORDER);
                     if (this.isSelectableWidget(drawableHelper)) {
                         FOCUSED_BUTTON_ID = getDrawableHelperId(drawableHelper);
-                        this.prevClickedButton = null;
                         if (FOCUSED_TEXT_FIELD != null) {
                             FOCUSED_TEXT_FIELD.setFocused(false);
                         }
@@ -55,7 +49,6 @@ public abstract class ScreenMixin {
                 DrawableHelper drawableHelper = drawableHelpers.get(FOCUSED_BUTTON_ORDER);
                 if (drawableHelper instanceof ButtonWidget) {
                     ButtonWidget button = (ButtonWidget) drawableHelper;
-                    this.prevClickedButton = button;
                     button.playDownSound(this.client.getSoundManager());
                     this.buttonClicked(button);
                 }
@@ -66,23 +59,22 @@ public abstract class ScreenMixin {
         }
     }
 
-    @Inject(method = "handleMouse", at = @At("TAIL"))
-    public void onHandleMouse(CallbackInfo ci) {
-        if (drawableHelpers.stream().anyMatch(this::isHoveredButtonByMouse)) {
-            FOCUSED_BUTTON_ORDER = -1;
-        }
-    }
-
-    @Inject(method = "<init>", at = @At("TAIL"))
+    @Inject(method = "init(Lnet/minecraft/client/MinecraftClient;II)V", at = @At("TAIL"))
     public void onInit(CallbackInfo ci) {
         FOCUSED_BUTTON_ORDER = -1;
         FOCUSED_TEXT_FIELD = null;
+        FOCUSED_BUTTON_ID = -1;
         drawableHelpers.clear();
+    }
+
+    @Inject(method = "mouseClicked", at = @At("TAIL"))
+    public void onMouseClicked(CallbackInfo ci) {
+        FOCUSED_BUTTON_ORDER = -1;
     }
 
     @Inject(method = "render", at = @At("TAIL"))
     public void onDebug(CallbackInfo ci) {
-        this.textRenderer.draw(Boolean.toString(FOCUSED_BUTTON_ORDER == -1), 10, 10, -1);
+        //this.client.textRenderer.draw(Integer.toString(FOCUSED_BUTTON_ORDER), 10, 10, -1);
     }
 
     @Redirect(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/widget/ButtonWidget;render(Lnet/minecraft/client/MinecraftClient;II)V"))
@@ -92,14 +84,6 @@ public abstract class ScreenMixin {
         } else {
             instance.render(client, mouseX, mouseY);
         }
-    }
-
-    private boolean isHoveredButtonByMouse(DrawableHelper drawableHelper) {
-        if (drawableHelper instanceof ButtonWidget) {
-            ButtonWidget buttonWidget = (ButtonWidget) drawableHelper;
-            return buttonWidget.isHovered() && buttonWidget.id != FOCUSED_BUTTON_ID;
-        }
-        return false;
     }
 
     private boolean isSelectableWidget(DrawableHelper drawableHelper) {
