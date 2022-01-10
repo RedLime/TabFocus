@@ -16,6 +16,6 @@ repositories {
 dependencies {
 	...
 	modImplementation 'com.github.RedLime:TabFocus:1.0'
-  //modImplementation include 'com.github.RedLime:TabFocus:1.0'
+	//modImplementation include 'com.github.RedLime:TabFocus:1.0'
 }
  ```
