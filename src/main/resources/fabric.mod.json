@@ -4,10 +4,13 @@
   "version": "${version}",
   "name": "TabFocus",
   "description": "",
-  "authors": [],
-  "contact": {},
+  "authors": [
+    "RedLime"
+  ],
+  "contact": {
+    "sources": "https://github.com/RedLime/TabFocus"
+  },
   "license": "MIT",
-  "icon": "assets/tabfocus/icon.png",
   "environment": "client",
   "entrypoints": {
     "client": [
@@ -19,6 +22,6 @@
   ],
   "depends": {
     "fabricloader": ">=0.12.12",
-    "minecraft": "1.8.9"
+    "minecraft": ["1.8.9", "1.7.10"]
   }
 }

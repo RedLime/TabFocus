@@ -120,8 +120,7 @@ public abstract class ScreenMixin {
             return buttonWidget.id;
         }
         if (drawableHelper instanceof TextFieldWidget) {
-            TextFieldWidget textFieldWidget = (TextFieldWidget) drawableHelper;
-            return textFieldWidget.getId();
+            return -2;
         }
         return -1;
     }
