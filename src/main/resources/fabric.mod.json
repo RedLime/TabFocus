@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "id": "tabfocus",
+  "version": "${version}",
+  "name": "TabFocus",
+  "description": "",
+  "authors": [],
+  "contact": {},
+  "license": "MIT",
+  "icon": "assets/tabfocus/icon.png",
+  "environment": "client",
+  "entrypoints": {
+    "client": [
+      "com.redlimerl.tabfocus.TabFocus"
+    ]
+  },
+  "mixins": [
+    "tabfocus.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.12.12",
+    "minecraft": "1.8.9"
+  }
+}
