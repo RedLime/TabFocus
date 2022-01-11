@@ -30,7 +30,11 @@ public abstract class ScreenMixin {
             if (keyCode == 15
                     && drawableHelpers.stream().anyMatch(this::isSelectableWidget)) {
                 while (true) {
-                    FOCUSED_BUTTON_ORDER = (FOCUSED_BUTTON_ORDER + 1) % drawableHelpers.size();
+                    if (Screen.hasShiftDown()) {
+                        FOCUSED_BUTTON_ORDER = (FOCUSED_BUTTON_ORDER - 1) % drawableHelpers.size();
+                        if (FOCUSED_BUTTON_ORDER < 0) FOCUSED_BUTTON_ORDER = drawableHelpers.size() - 1;
+                    }
+                    else FOCUSED_BUTTON_ORDER = (FOCUSED_BUTTON_ORDER + 1) % drawableHelpers.size();
                     DrawableHelper drawableHelper = drawableHelpers.get(FOCUSED_BUTTON_ORDER);
                     if (this.isSelectableWidget(drawableHelper)) {
                         FOCUSED_BUTTON_ID = getDrawableHelperId(drawableHelper);
