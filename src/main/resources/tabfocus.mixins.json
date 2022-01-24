@@ -8,7 +8,10 @@
   "client": [
     "CreateWorldScreenMixin",
     "ScreenMixin",
-    "widget.TextFieldWidgetMixin"
+    "widget.ButtonWidgetMixin",
+    "widget.TextFieldWidgetMixin",
+    "widget.OptionSliderWidgetMixin",
+    "accessor.GameOptionsOptionAccessor"
   ],
   "injectors": {
     "defaultRequire": 1

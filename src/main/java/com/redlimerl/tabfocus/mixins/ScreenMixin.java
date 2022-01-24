@@ -1,11 +1,15 @@
 package com.redlimerl.tabfocus.mixins;
 
+import com.redlimerl.tabfocus.CoolGuyOptionSlider;
 import com.redlimerl.tabfocus.TabFocus;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
+import net.minecraft.client.gui.widget.OptionSliderWidget;
+import net.minecraft.client.gui.widget.SliderWidget;
 import net.minecraft.client.gui.widget.TextFieldWidget;
+import net.minecraft.util.math.MathHelper;
 import org.lwjgl.input.Keyboard;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -23,10 +27,14 @@ public abstract class ScreenMixin {
 
     @Shadow protected MinecraftClient client;
 
+    @Shadow private ButtonWidget prevClickedButton;
+
     @Inject(method = "handleKeyboard", at = @At("HEAD"))
     public void onKeyPressed(CallbackInfo ci) {
         if (Keyboard.getEventKeyState()) {
             int keyCode = Keyboard.getEventKey();
+
+            // Press Tab
             if (keyCode == 15
                     && drawableHelpers.stream().anyMatch(this::isSelectableWidget)) {
                 while (true) {
@@ -50,6 +58,8 @@ public abstract class ScreenMixin {
                     }
                 }
             }
+
+            // Press Enter
             else if ((keyCode == 28 || keyCode == 156) && FOCUSED_BUTTON_ORDER != -1) {
                 DrawableHelper drawableHelper = drawableHelpers.get(FOCUSED_BUTTON_ORDER);
                 if (drawableHelper instanceof ButtonWidget) {
@@ -58,6 +68,20 @@ public abstract class ScreenMixin {
                     this.buttonClicked(button);
                 }
             }
+
+            // Press allow key (for Slider widget)
+            else if (keyCode == 203 || keyCode == 205) {
+                DrawableHelper drawableHelper = this.prevClickedButton != null ? this.prevClickedButton : drawableHelpers.get(FOCUSED_BUTTON_ORDER);
+                if (drawableHelper instanceof SliderWidget) {
+                    SliderWidget sliderWidget = (SliderWidget) drawableHelper;
+                    sliderWidget.method_9459(MathHelper.clamp(sliderWidget.getProgress() + (keyCode == 203 ? -0.01f : 0.01f), 0f, 1f));
+                } else if (drawableHelper instanceof OptionSliderWidget) {
+                    OptionSliderWidget sliderWidget = (OptionSliderWidget) drawableHelper;
+                    ((CoolGuyOptionSlider) sliderWidget).moveValue(keyCode == 203);
+                }
+            }
+
+            // Press ESC
             else if (keyCode == 1) {
                 FOCUSED_BUTTON_ORDER = -1;
             }
