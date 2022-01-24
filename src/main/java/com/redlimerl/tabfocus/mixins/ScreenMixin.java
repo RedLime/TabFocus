@@ -70,7 +70,7 @@ public abstract class ScreenMixin {
             }
 
             // Press allow key (for Slider widget)
-            else if (keyCode == 203 || keyCode == 205) {
+            else if ((keyCode == 203 || keyCode == 205) && FOCUSED_BUTTON_ORDER != -1) {
                 DrawableHelper drawableHelper = this.prevClickedButton != null ? this.prevClickedButton : drawableHelpers.get(FOCUSED_BUTTON_ORDER);
                 if (drawableHelper instanceof SliderWidget) {
                     SliderWidget sliderWidget = (SliderWidget) drawableHelper;
