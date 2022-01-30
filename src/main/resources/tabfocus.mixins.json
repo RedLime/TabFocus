@@ -3,15 +3,15 @@
   "minVersion": "0.8",
   "package": "com.redlimerl.tabfocus.mixins",
   "compatibilityLevel": "JAVA_8",
-  "mixins": [
-  ],
+  "mixins": [],
   "client": [
     "CreateWorldScreenMixin",
     "ScreenMixin",
+    "WorldListWidgetMixin",
+    "accessor.GameOptionsOptionAccessor",
     "widget.ButtonWidgetMixin",
-    "widget.TextFieldWidgetMixin",
     "widget.OptionSliderWidgetMixin",
-    "accessor.GameOptionsOptionAccessor"
+    "widget.TextFieldWidgetMixin"
   ],
   "injectors": {
     "defaultRequire": 1

@@ -27,6 +27,7 @@ minecraft {
 loom {
 // Uncomment when using loom 0.10
 //	setIntermediaryUrl('https://maven.legacyfabric.net/net/fabricmc/intermediary/%1$s/intermediary-%1$s-v2.jar');
+    accessWidener = file("src/main/resources/tabfocus.accesswidener")
 }
 
 dependencies {
