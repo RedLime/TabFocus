@@ -1,11 +1,11 @@
 package com.redlimerl.tabfocus.mixins.widget;
 
 import com.redlimerl.tabfocus.CoolGuyOptionSlider;
-import com.redlimerl.tabfocus.mixins.accessor.class_350Accessor;
-import net.minecraft.class_350;
+import com.redlimerl.tabfocus.mixins.accessor.GameOptionAccessor;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.OptionSliderWidget;
+import net.minecraft.client.options.GameOption;
 import net.minecraft.util.math.MathHelper;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -15,7 +15,7 @@ public abstract class OptionSliderWidgetMixin extends ButtonWidget implements Co
 
     @Shadow private float value;
 
-    @Shadow private class_350 option;
+    @Shadow private GameOption option;
 
     public OptionSliderWidgetMixin(int id, int x, int y, String message) {
         super(id, x, y, message);
@@ -24,7 +24,7 @@ public abstract class OptionSliderWidgetMixin extends ButtonWidget implements Co
     @Override
     public void moveValue(boolean isLeft) {
         MinecraftClient client = MinecraftClient.getInstance();
-        class_350Accessor optionAccessor = (class_350Accessor) this.option;
+        GameOptionAccessor optionAccessor = (GameOptionAccessor) this.option;
 
         float f;
         if (optionAccessor.getStep() == 0) {

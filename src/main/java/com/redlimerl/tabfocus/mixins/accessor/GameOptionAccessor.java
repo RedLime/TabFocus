@@ -1,11 +1,11 @@
 package com.redlimerl.tabfocus.mixins.accessor;
 
-import net.minecraft.class_350;
+import net.minecraft.client.options.GameOption;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Accessor;
 
-@Mixin(class_350.class)
-public interface class_350Accessor {
+@Mixin(GameOption.class)
+public interface GameOptionAccessor {
     @Accessor("field_7688")
     float getStep();
 
