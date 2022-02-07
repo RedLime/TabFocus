@@ -3,6 +3,7 @@ package com.redlimerl.tabfocus.mixins;
 import com.redlimerl.tabfocus.CoolGuyOptionSlider;
 import com.redlimerl.tabfocus.CoolPeopleListWidget;
 import com.redlimerl.tabfocus.FocusableWidget;
+import net.minecraft.class_392;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.gui.screen.Screen;
@@ -61,7 +62,7 @@ public abstract class ScreenMixin {
                     button.playDownSound(this.client.getSoundManager());
                     this.buttonClicked(button);
                 }
-                SelectWorldScreen.WorldListWidget worldList = FocusableWidget.getWidgetOrNull(FOCUSED_BUTTON_ORDER, SelectWorldScreen.WorldListWidget.class);
+                class_392 worldList = FocusableWidget.getWidgetOrNull(FOCUSED_BUTTON_ORDER, class_392.class);
                 if (worldList != null) {
                     CoolPeopleListWidget widget = (CoolPeopleListWidget) worldList;
                     widget.clickElement();
@@ -81,8 +82,8 @@ public abstract class ScreenMixin {
             }
 
             // Press up/down key (for Slider widget)
-            else if ((keyCode == 200 || keyCode == 208) && FocusableWidget.getWidgetOrNull(FOCUSED_BUTTON_ORDER, SelectWorldScreen.WorldListWidget.class) != null) {
-                SelectWorldScreen.WorldListWidget worldListWidget = FocusableWidget.getWidgetOrNull(FOCUSED_BUTTON_ORDER, SelectWorldScreen.WorldListWidget.class);
+            else if ((keyCode == 200 || keyCode == 208) && FocusableWidget.getWidgetOrNull(FOCUSED_BUTTON_ORDER, class_392.class) != null) {
+                class_392 worldListWidget = FocusableWidget.getWidgetOrNull(FOCUSED_BUTTON_ORDER, class_392.class);
                 if (worldListWidget != null) {
                     CoolPeopleListWidget widget = (CoolPeopleListWidget) worldListWidget;
                     widget.moveElement(keyCode == 200);

@@ -5,6 +5,7 @@ import com.redlimerl.tabfocus.mixins.accessor.GameOptionsOptionAccessor;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.OptionSliderWidget;
+import net.minecraft.client.options.GameOption;
 import net.minecraft.client.options.GameOptions;
 import net.minecraft.util.math.MathHelper;
 import org.spongepowered.asm.mixin.Mixin;
@@ -15,7 +16,7 @@ public abstract class OptionSliderWidgetMixin extends ButtonWidget implements Co
 
     @Shadow private float value;
 
-    @Shadow private GameOptions.Option option;
+    @Shadow private GameOption option;
 
     public OptionSliderWidgetMixin(int id, int x, int y, String message) {
         super(id, x, y, message);
@@ -30,12 +31,12 @@ public abstract class OptionSliderWidgetMixin extends ButtonWidget implements Co
         float f;
         if (optionAccessor.getStep() == 0) {
             this.value = MathHelper.clamp(this.value + (isLeft ? -0.01f : 0.01f), 0.0F, 1.0F);
-            f = this.option.getValue(this.value);
+            f = this.option.method_6661(this.value);
         } else {
-            f = MathHelper.clamp(this.option.getValue(this.value) + (optionAccessor.getStep() * (isLeft ? -1 : 1)), optionAccessor.getMin(), this.option.getMaxValue());
+            f = MathHelper.clamp(this.option.method_6661(this.value) + (optionAccessor.getStep() * (isLeft ? -1 : 1)), optionAccessor.getMin(), this.option.method_6663());
         }
-        client.options.setValue(this.option, f);
-        this.value = this.option.getRatio(f);
-        this.message = client.options.getValueMessage(this.option);
+        client.options.method_869(this.option, f);
+        this.value = this.option.method_6660(f);
+        this.message = client.options.method_878(this.option);
     }
 }

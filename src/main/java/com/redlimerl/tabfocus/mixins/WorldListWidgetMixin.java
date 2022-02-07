@@ -2,6 +2,7 @@ package com.redlimerl.tabfocus.mixins;
 
 import com.redlimerl.tabfocus.CoolPeopleListWidget;
 import com.redlimerl.tabfocus.FocusableWidget;
+import net.minecraft.class_392;
 import net.minecraft.client.gui.screen.world.SelectWorldScreen;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -9,7 +10,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-@Mixin(SelectWorldScreen.WorldListWidget.class)
+@Mixin(class_392.class)
 public abstract class WorldListWidgetMixin implements CoolPeopleListWidget {
 
     @Shadow protected abstract int getEntryCount();
