@@ -2,6 +2,7 @@ package com.redlimerl.tabfocus.mixins;
 
 import com.redlimerl.tabfocus.FocusableWidget;
 import net.minecraft.client.gui.screen.world.CreateWorldScreen;
+import net.minecraft.client.gui.screen.world.SelectWorldScreen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.TextFieldWidget;
 import org.spongepowered.asm.mixin.Mixin;
