@@ -4,9 +4,9 @@ import com.redlimerl.tabfocus.CoolGuyOptionSlider;
 import com.redlimerl.tabfocus.CoolPeopleListWidget;
 import com.redlimerl.tabfocus.FocusableWidget;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.class_2848;
 import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.screen.world.SelectWorldScreen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.OptionSliderWidget;
 import net.minecraft.client.gui.widget.SliderWidget;
@@ -30,7 +30,7 @@ public abstract class ScreenMixin {
 
     @Shadow protected MinecraftClient client;
 
-    @Shadow private ButtonWidget prevClickedButton;
+    @Shadow protected ButtonWidget prevClickedButton;
 
     @Inject(method = "handleKeyboard", at = @At("HEAD"))
     public void onKeyPressed(CallbackInfo ci) {
@@ -61,7 +61,10 @@ public abstract class ScreenMixin {
                     button.playDownSound(this.client.getSoundManager());
                     this.buttonClicked(button);
                 }
-                SelectWorldScreen.WorldListWidget worldList = FocusableWidget.getWidgetOrNull(FOCUSED_BUTTON_ORDER, SelectWorldScreen.WorldListWidget.class);
+
+
+
+                class_2848 worldList = FocusableWidget.getWidgetOrNull(FOCUSED_BUTTON_ORDER, class_2848.class);
                 if (worldList != null) {
                     CoolPeopleListWidget widget = (CoolPeopleListWidget) worldList;
                     widget.clickElement();
@@ -81,8 +84,8 @@ public abstract class ScreenMixin {
             }
 
             // Press up/down key (for Slider widget)
-            else if ((keyCode == 200 || keyCode == 208) && FocusableWidget.getWidgetOrNull(FOCUSED_BUTTON_ORDER, SelectWorldScreen.WorldListWidget.class) != null) {
-                SelectWorldScreen.WorldListWidget worldListWidget = FocusableWidget.getWidgetOrNull(FOCUSED_BUTTON_ORDER, SelectWorldScreen.WorldListWidget.class);
+            else if ((keyCode == 200 || keyCode == 208) && FocusableWidget.getWidgetOrNull(FOCUSED_BUTTON_ORDER, class_2848.class) != null) {
+                class_2848 worldListWidget = FocusableWidget.getWidgetOrNull(FOCUSED_BUTTON_ORDER, class_2848.class);
                 if (worldListWidget != null) {
                     CoolPeopleListWidget widget = (CoolPeopleListWidget) worldListWidget;
                     widget.moveElement(keyCode == 200);
@@ -118,13 +121,13 @@ public abstract class ScreenMixin {
         //this.client.textRenderer.draw(Integer.toString(FOCUSED_BUTTON_ORDER), 10, 10, -1);
     }
 
-    @Redirect(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/widget/ButtonWidget;render(Lnet/minecraft/client/MinecraftClient;II)V"))
-    public void buttonRender(ButtonWidget instance, MinecraftClient client, int mouseX, int mouseY) {
+    @Redirect(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/widget/ButtonWidget;method_891(Lnet/minecraft/client/MinecraftClient;IIF)V"))
+    public void buttonRender(ButtonWidget instance, MinecraftClient minecraftClient, int mouseX, int mouseY, float tickDelta) {
         FocusableWidget.initWidget(instance, () -> instance.visible && instance.active);
         if (FOCUSED_WIDGET != null && FOCUSED_WIDGET.isEquals(instance)) {
-            instance.render(client, instance.x, instance.y);
+            instance.method_891(client, instance.x, instance.y, tickDelta);
         } else {
-            instance.render(client, mouseX, mouseY);
+            instance.method_891(client, mouseX, mouseY, tickDelta);
         }
     }
 }
