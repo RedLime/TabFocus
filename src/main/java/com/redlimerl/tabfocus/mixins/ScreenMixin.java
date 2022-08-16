@@ -3,11 +3,17 @@ package com.redlimerl.tabfocus.mixins;
 import com.redlimerl.tabfocus.CoolGuyOptionSlider;
 import com.redlimerl.tabfocus.CoolPeopleListWidget;
 import com.redlimerl.tabfocus.FocusableWidget;
+import com.redlimerl.tabfocus.mixins.accessor.ControlsOptionsScreenAccessor;
+import com.redlimerl.tabfocus.mixins.accessor.SoundButtonWidgetAccessor;
+import com.redlimerl.tabfocus.mixins.accessor.SoundsScreenAccessor;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.screen.SoundsScreen;
+import net.minecraft.client.gui.screen.options.ControlsOptionsScreen;
 import net.minecraft.client.gui.screen.world.SelectWorldScreen;
 import net.minecraft.client.gui.widget.ButtonWidget;
+import net.minecraft.client.gui.widget.ListWidget;
 import net.minecraft.client.gui.widget.OptionSliderWidget;
 import net.minecraft.client.gui.widget.SliderWidget;
 import net.minecraft.util.math.MathHelper;
@@ -32,7 +38,7 @@ public abstract class ScreenMixin {
 
     @Shadow private ButtonWidget prevClickedButton;
 
-    @Inject(method = "handleKeyboard", at = @At("HEAD"))
+    @Inject(method = "handleKeyboard", at = @At("HEAD"), cancellable = true)
     public void onKeyPressed(CallbackInfo ci) {
         if (Keyboard.getEventKeyState()) {
             int keyCode = Keyboard.getEventKey();
@@ -58,10 +64,17 @@ public abstract class ScreenMixin {
             else if ((keyCode == 28 || keyCode == 156)) {
                 ButtonWidget button = FocusableWidget.getWidgetOrNull(FOCUSED_BUTTON_ORDER, ButtonWidget.class);
                 if (button != null) {
+                    if (client.currentScreen instanceof ControlsOptionsScreen && ((ControlsOptionsScreen) client.currentScreen).selectedKeyBinding == null) {
+                        ((ControlsOptionsScreenAccessor) client.currentScreen).getKeyBindingListWidget().mouseClicked(button.x, button.y, keyCode);
+                        if (((ControlsOptionsScreen) client.currentScreen).selectedKeyBinding != null) {
+                            ci.cancel();
+                            return;
+                        }
+                    }
                     button.playDownSound(this.client.getSoundManager());
                     this.buttonClicked(button);
                 }
-                SelectWorldScreen.WorldListWidget worldList = FocusableWidget.getWidgetOrNull(FOCUSED_BUTTON_ORDER, SelectWorldScreen.WorldListWidget.class);
+                ListWidget worldList = FocusableWidget.getWidgetOrNull(FOCUSED_BUTTON_ORDER, ListWidget.class);
                 if (worldList != null) {
                     CoolPeopleListWidget widget = (CoolPeopleListWidget) worldList;
                     widget.clickElement();
@@ -77,6 +90,12 @@ public abstract class ScreenMixin {
                 } else if (sliderWidgetHelper instanceof OptionSliderWidget) {
                     OptionSliderWidget sliderWidget = (OptionSliderWidget) sliderWidgetHelper;
                     ((CoolGuyOptionSlider) sliderWidget).moveValue(keyCode == 203);
+                } else if (client.currentScreen instanceof SoundsScreen && sliderWidgetHelper != null && ((ButtonWidget) sliderWidgetHelper).id != 200) {
+                    SoundButtonWidgetAccessor slider = ((SoundButtonWidgetAccessor) sliderWidgetHelper);
+                    slider.setVolume(Math.min(1, Math.max(0, slider.getVolume() + (keyCode == 203 ? -0.01f : 0.01f))));
+                    client.options.setSoundVolume(slider.getCategory(), slider.getVolume());
+                    client.options.save();
+                    ((ButtonWidget) sliderWidgetHelper).message = slider.getCategoryName() + ": " + ((SoundsScreenAccessor) client.currentScreen).callGetVolume(slider.getCategory());
                 }
             }
 
