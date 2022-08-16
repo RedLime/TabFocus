@@ -3,7 +3,6 @@ package com.redlimerl.tabfocus.mixins;
 import com.redlimerl.tabfocus.FocusableWidget;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.world.CreateWorldScreen;
-import net.minecraft.client.gui.screen.world.SelectWorldScreen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.TextFieldWidget;
 import org.spongepowered.asm.mixin.Mixin;
@@ -17,7 +16,7 @@ public abstract class CreateWorldScreenMixin {
 
     @Redirect(method = "keyPressed", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/world/CreateWorldScreen;buttonClicked(Lnet/minecraft/client/gui/widget/ButtonWidget;)V"))
     public void buttonClickedRedirect(CreateWorldScreen instance, ButtonWidget button) {
-        if (MinecraftClient.getInstance().currentScreen instanceof SelectWorldScreen) return;
+        if (!(MinecraftClient.getInstance().currentScreen instanceof CreateWorldScreen)) return;
         if (FocusableWidget.FOCUSED_WIDGET != null) {
             if (FocusableWidget.FOCUSED_WIDGET.isEquals(button) || FocusableWidget.FOCUSED_WIDGET.is(TextFieldWidget.class)) {
                 this.buttonClicked(button);
