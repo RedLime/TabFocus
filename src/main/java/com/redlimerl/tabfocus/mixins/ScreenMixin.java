@@ -74,7 +74,7 @@ public abstract class ScreenMixin {
                     button.playDownSound(this.client.getSoundManager());
                     this.buttonClicked(button);
                 }
-                ListWidget worldList = FocusableWidget.getWidgetOrNull(FOCUSED_BUTTON_ORDER, ListWidget.class);
+                SelectWorldScreen.WorldListWidget worldList = FocusableWidget.getWidgetOrNull(FOCUSED_BUTTON_ORDER, SelectWorldScreen.WorldListWidget.class);
                 if (worldList != null) {
                     CoolPeopleListWidget widget = (CoolPeopleListWidget) worldList;
                     widget.clickElement();

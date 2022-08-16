@@ -19,7 +19,7 @@ public abstract class CreateWorldScreenMixin {
     public void buttonClickedRedirect(CreateWorldScreen instance, ButtonWidget button) {
         if (!(MinecraftClient.getInstance().currentScreen instanceof CreateWorldScreen)) return;
         if (FocusableWidget.FOCUSED_WIDGET != null) {
-            if ((FocusableWidget.FOCUSED_WIDGET.isEquals(button) || FocusableWidget.FOCUSED_WIDGET.is(TextFieldWidget.class))) {
+            if (FocusableWidget.FOCUSED_WIDGET.isEquals(button) || FocusableWidget.FOCUSED_WIDGET.is(TextFieldWidget.class)) {
                 this.buttonClicked(button);
             }
         } else {
