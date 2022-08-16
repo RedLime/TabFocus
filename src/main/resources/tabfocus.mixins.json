@@ -4,7 +4,6 @@
   "package": "com.redlimerl.tabfocus.mixins",
   "compatibilityLevel": "JAVA_8",
   "client": [
-    "class_4121Mixin",
     "CreateWorldScreenMixin",
     "ScreenMixin",
     "WorldListWidgetMixin",
