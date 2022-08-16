@@ -3,10 +3,13 @@ package com.redlimerl.tabfocus.mixins;
 import com.redlimerl.tabfocus.CoolGuyOptionSlider;
 import com.redlimerl.tabfocus.CoolPeopleListWidget;
 import com.redlimerl.tabfocus.FocusableWidget;
+import com.redlimerl.tabfocus.mixins.accessor.SoundButtonWidgetAccessor;
+import com.redlimerl.tabfocus.mixins.accessor.SoundsScreenAccessor;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.class_2848;
 import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.screen.SoundsScreen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.class_4121;
 import net.minecraft.class_4123;
@@ -69,6 +72,12 @@ public abstract class ScreenMixin extends class_4121 implements class_4123 {
             if (sliderWidgetHelper instanceof OptionSliderWidget) {
                 OptionSliderWidget sliderWidget = (OptionSliderWidget) sliderWidgetHelper;
                 ((CoolGuyOptionSlider) sliderWidget).moveValue(keyCode == 331);
+            } else if (client.currentScreen instanceof SoundsScreen && sliderWidgetHelper != null && ((ButtonWidget) sliderWidgetHelper).id != 200) {
+                SoundButtonWidgetAccessor slider = ((SoundButtonWidgetAccessor) sliderWidgetHelper);
+                slider.setVolume(Math.min(1, Math.max(0, slider.getVolume() + (keyCode == 331 ? -0.01f : 0.01f))));
+                client.options.setSoundVolume(slider.getCategory(), slider.getVolume());
+                client.options.save();
+                ((ButtonWidget) sliderWidgetHelper).message = slider.getCategoryName() + ": " + ((SoundsScreenAccessor) client.currentScreen).callGetVolume(slider.getCategory());
             }
         }
 
