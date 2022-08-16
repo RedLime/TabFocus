@@ -3,11 +3,12 @@
   "minVersion": "0.8",
   "package": "com.redlimerl.tabfocus.mixins",
   "compatibilityLevel": "JAVA_8",
-  "mixins": [],
   "client": [
+    "class_4121Mixin",
     "CreateWorldScreenMixin",
     "ScreenMixin",
     "WorldListWidgetMixin",
+    "accessor.EntryListWidgetAccessor",
     "accessor.GameOptionsOptionAccessor",
     "widget.ButtonWidgetMixin",
     "widget.OptionSliderWidgetMixin",

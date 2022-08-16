@@ -6,9 +6,9 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 
 @Mixin(GameOptions.Option.class)
 public interface GameOptionsOptionAccessor {
-    @Accessor("step")
+    @Accessor("field_19996")
     float getStep();
 
-    @Accessor("min")
-    float getMin();
+    @Accessor("field_19997")
+    double getMin();
 }

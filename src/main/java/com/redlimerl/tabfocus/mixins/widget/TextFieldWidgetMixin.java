@@ -17,7 +17,7 @@ public abstract class TextFieldWidgetMixin extends DrawableHelper {
 
     @Shadow public abstract void setFocused(boolean focused);
 
-    @Inject(method = "render", at = @At("HEAD"))
+    @Inject(method = "method_18385", at = @At("HEAD"))
     public void onRender(CallbackInfo ci) {
         FocusableWidget.initWidget(this, () -> this.isVisible() && !this.isFocused(),
                 () -> this.setFocused(true),

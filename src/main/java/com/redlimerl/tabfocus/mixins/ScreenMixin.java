@@ -4,95 +4,86 @@ import com.redlimerl.tabfocus.CoolGuyOptionSlider;
 import com.redlimerl.tabfocus.CoolPeopleListWidget;
 import com.redlimerl.tabfocus.FocusableWidget;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.class_2848;
 import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.screen.world.SelectWorldScreen;
 import net.minecraft.client.gui.widget.ButtonWidget;
+import net.minecraft.class_4121;
+import net.minecraft.class_4123;
 import net.minecraft.client.gui.widget.OptionSliderWidget;
-import net.minecraft.client.gui.widget.SliderWidget;
-import net.minecraft.util.math.MathHelper;
-import org.lwjgl.input.Keyboard;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import static com.redlimerl.tabfocus.FocusableWidget.FOCUSED_WIDGET;
 import static com.redlimerl.tabfocus.FocusableWidget.focusableWidgets;
 import static com.redlimerl.tabfocus.TabFocus.FOCUSED_BUTTON_ORDER;
 
 @Mixin(Screen.class)
-public abstract class ScreenMixin {
-
-    @Shadow protected abstract void buttonClicked(ButtonWidget button);
+public abstract class ScreenMixin extends class_4121 implements class_4123 {
 
     @Shadow protected MinecraftClient client;
 
-    @Shadow private ButtonWidget prevClickedButton;
+    @Inject(method = "keyPressed", at = @At("HEAD"))
+    public void keyPressed(int i, int keyCode, int j, CallbackInfoReturnable<Boolean> cir) {
+        // Press Tab
+        if (keyCode == 15) {
+            FocusableWidget.deselectWidget();
+            while (focusableWidgets.stream().anyMatch(FocusableWidget::isSelectableWidget)) {
+                if (Screen.hasShiftDown()) {
+                    FOCUSED_BUTTON_ORDER = (FOCUSED_BUTTON_ORDER - 1) % focusableWidgets.size();
+                    if (FOCUSED_BUTTON_ORDER < 0) FOCUSED_BUTTON_ORDER = focusableWidgets.size() - 1;
+                } else FOCUSED_BUTTON_ORDER = (FOCUSED_BUTTON_ORDER + 1) % focusableWidgets.size();
+                FocusableWidget<?> widget = FocusableWidget.get(FOCUSED_BUTTON_ORDER);
+                if (widget != null && widget.isSelectableWidget()) {
+                    FocusableWidget.selectWidget(widget);
+                    break;
+                }
+            }
+        }
 
-    @Inject(method = "handleKeyboard", at = @At("HEAD"))
-    public void onKeyPressed(CallbackInfo ci) {
-        if (Keyboard.getEventKeyState()) {
-            int keyCode = Keyboard.getEventKey();
-
-            // Press Tab
-            if (keyCode == 15) {
-                FocusableWidget.deselectWidget();
-                while (focusableWidgets.stream().anyMatch(FocusableWidget::isSelectableWidget)) {
-                    if (Screen.hasShiftDown()) {
-                        FOCUSED_BUTTON_ORDER = (FOCUSED_BUTTON_ORDER - 1) % focusableWidgets.size();
-                        if (FOCUSED_BUTTON_ORDER < 0) FOCUSED_BUTTON_ORDER = focusableWidgets.size() - 1;
-                    }
-                    else FOCUSED_BUTTON_ORDER = (FOCUSED_BUTTON_ORDER + 1) % focusableWidgets.size();
-                    FocusableWidget<?> widget = FocusableWidget.get(FOCUSED_BUTTON_ORDER);
-                    if (widget != null && widget.isSelectableWidget()) {
-                        FocusableWidget.selectWidget(widget);
-                        break;
-                    }
+        // Press Enter
+        else if ((keyCode == 28 || keyCode == 156)) {
+            ButtonWidget button = FocusableWidget.getWidgetOrNull(FOCUSED_BUTTON_ORDER, ButtonWidget.class);
+            if (button != null) {
+                button.playDownSound(MinecraftClient.getInstance().getSoundManager());
+                if (!(button instanceof OptionSliderWidget)) {
+                    button.method_18374(button.x, button.y);
                 }
             }
 
-            // Press Enter
-            else if ((keyCode == 28 || keyCode == 156)) {
-                ButtonWidget button = FocusableWidget.getWidgetOrNull(FOCUSED_BUTTON_ORDER, ButtonWidget.class);
-                if (button != null) {
-                    button.playDownSound(this.client.getSoundManager());
-                    this.buttonClicked(button);
-                }
-                SelectWorldScreen.WorldListWidget worldList = FocusableWidget.getWidgetOrNull(FOCUSED_BUTTON_ORDER, SelectWorldScreen.WorldListWidget.class);
-                if (worldList != null) {
-                    CoolPeopleListWidget widget = (CoolPeopleListWidget) worldList;
-                    widget.clickElement();
-                }
+            class_2848 worldList = FocusableWidget.getWidgetOrNull(FOCUSED_BUTTON_ORDER, class_2848.class);
+            if (worldList != null) {
+                CoolPeopleListWidget widget = (CoolPeopleListWidget) worldList;
+                widget.clickElement();
             }
+        }
 
-            // Press left/right key (for Slider widget)
-            else if (keyCode == 203 || keyCode == 205) {
-                DrawableHelper sliderWidgetHelper = this.prevClickedButton != null ? this.prevClickedButton : FocusableWidget.getWidgetOrNull(FOCUSED_BUTTON_ORDER, DrawableHelper.class);
-                if (sliderWidgetHelper instanceof SliderWidget) {
-                    SliderWidget sliderWidget = (SliderWidget) sliderWidgetHelper;
-                    sliderWidget.method_9459(MathHelper.clamp(sliderWidget.getProgress() + (keyCode == 203 ? -0.01f : 0.01f), 0f, 1f));
-                } else if (sliderWidgetHelper instanceof OptionSliderWidget) {
-                    OptionSliderWidget sliderWidget = (OptionSliderWidget) sliderWidgetHelper;
-                    ((CoolGuyOptionSlider) sliderWidget).moveValue(keyCode == 203);
-                }
+        // Press left/right key (for Slider widget)
+        else if (keyCode == 331 || keyCode == 333) {
+            DrawableHelper sliderWidgetHelper = FocusableWidget.getWidgetOrNull(FOCUSED_BUTTON_ORDER, DrawableHelper.class);
+            if (sliderWidgetHelper instanceof OptionSliderWidget) {
+                OptionSliderWidget sliderWidget = (OptionSliderWidget) sliderWidgetHelper;
+                ((CoolGuyOptionSlider) sliderWidget).moveValue(keyCode == 331);
             }
+        }
 
-            // Press up/down key (for Slider widget)
-            else if ((keyCode == 200 || keyCode == 208) && FocusableWidget.getWidgetOrNull(FOCUSED_BUTTON_ORDER, SelectWorldScreen.WorldListWidget.class) != null) {
-                SelectWorldScreen.WorldListWidget worldListWidget = FocusableWidget.getWidgetOrNull(FOCUSED_BUTTON_ORDER, SelectWorldScreen.WorldListWidget.class);
-                if (worldListWidget != null) {
-                    CoolPeopleListWidget widget = (CoolPeopleListWidget) worldListWidget;
-                    widget.moveElement(keyCode == 200);
-                }
+        // Press up/down key (for Slider widget)
+        else if ((keyCode == 328 || keyCode == 336) && FocusableWidget.getWidgetOrNull(FOCUSED_BUTTON_ORDER, class_2848.class) != null) {
+            class_2848 worldListWidget = FocusableWidget.getWidgetOrNull(FOCUSED_BUTTON_ORDER, class_2848.class);
+            if (worldListWidget != null) {
+                CoolPeopleListWidget widget = (CoolPeopleListWidget) worldListWidget;
+                widget.moveElement(keyCode == 328);
             }
+        }
 
-            // Press ESC
-            else if (keyCode == 1) {
-                clear();
-            }
+        // Press ESC
+        else if (keyCode == 1) {
+            clear();
         }
     }
 
@@ -107,10 +98,10 @@ public abstract class ScreenMixin {
         focusableWidgets.clear();
     }
 
-    @Inject(method = "mouseClicked", at = @At("TAIL"))
-    public void onMouseClicked(CallbackInfo ci) {
+    public boolean mouseClicked(double d, double e, int i) {
         FOCUSED_BUTTON_ORDER = -1;
         FOCUSED_WIDGET = null;
+        return super.mouseClicked(d,e,i);
     }
 
     @Inject(method = "render", at = @At("TAIL"))
@@ -118,13 +109,13 @@ public abstract class ScreenMixin {
         //this.client.textRenderer.draw(Integer.toString(FOCUSED_BUTTON_ORDER), 10, 10, -1);
     }
 
-    @Redirect(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/widget/ButtonWidget;render(Lnet/minecraft/client/MinecraftClient;II)V"))
-    public void buttonRender(ButtonWidget instance, MinecraftClient client, int mouseX, int mouseY) {
+    @Redirect(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/widget/ButtonWidget;method_891(IIF)V"))
+    public void buttonRender(ButtonWidget instance, int mouseX, int mouseY, float tickDelta) {
         FocusableWidget.initWidget(instance, () -> instance.visible && instance.active);
         if (FOCUSED_WIDGET != null && FOCUSED_WIDGET.isEquals(instance)) {
-            instance.render(client, instance.x, instance.y);
+            instance.method_891(instance.x, instance.y, tickDelta);
         } else {
-            instance.render(client, mouseX, mouseY);
+            instance.method_891(mouseX, mouseY, tickDelta);
         }
     }
 }
