@@ -5,10 +5,13 @@
   "compatibilityLevel": "JAVA_8",
   "mixins": [],
   "client": [
+    "accessor.ControlsOptionsScreenAccessor",
+    "accessor.GameOptionsOptionAccessor",
+    "accessor.SoundButtonWidgetAccessor",
+    "accessor.SoundsScreenAccessor",
     "CreateWorldScreenMixin",
     "ScreenMixin",
     "WorldListWidgetMixin",
-    "accessor.GameOptionsOptionAccessor",
     "widget.ButtonWidgetMixin",
     "widget.OptionSliderWidgetMixin",
     "widget.TextFieldWidgetMixin"
