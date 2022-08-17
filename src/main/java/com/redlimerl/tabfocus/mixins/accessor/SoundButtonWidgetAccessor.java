@@ -9,10 +9,10 @@ public interface SoundButtonWidgetAccessor {
     @Accessor
     SoundCategory getCategory();
 
-    @Accessor
-    float getVolume();
-    @Accessor
-    void setVolume(float volume);
+    @Accessor("field_20319")
+    double getVolume();
+    @Accessor("field_20319")
+    void setVolume(double volume);
 
     @Accessor
     String getCategoryName();

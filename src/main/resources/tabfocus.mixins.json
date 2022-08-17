@@ -4,11 +4,13 @@
   "package": "com.redlimerl.tabfocus.mixins",
   "compatibilityLevel": "JAVA_8",
   "client": [
+    "accessor.EntryListWidgetAccessor",
+    "accessor.GameOptionsOptionAccessor",
+    "accessor.SoundButtonWidgetAccessor",
+    "accessor.SoundsScreenAccessor",
     "CreateWorldScreenMixin",
     "ScreenMixin",
     "WorldListWidgetMixin",
-    "accessor.EntryListWidgetAccessor",
-    "accessor.GameOptionsOptionAccessor",
     "widget.ButtonWidgetMixin",
     "widget.OptionSliderWidgetMixin",
     "widget.TextFieldWidgetMixin"

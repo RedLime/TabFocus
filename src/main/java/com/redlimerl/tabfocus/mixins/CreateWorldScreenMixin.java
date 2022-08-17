@@ -74,7 +74,7 @@ public abstract class CreateWorldScreenMixin {
             } else if (client.currentScreen instanceof SoundsScreen && sliderWidgetHelper != null && ((ButtonWidget) sliderWidgetHelper).id != 200) {
                 SoundButtonWidgetAccessor slider = ((SoundButtonWidgetAccessor) sliderWidgetHelper);
                 slider.setVolume(Math.min(1, Math.max(0, slider.getVolume() + (keyCode == 331 ? -0.01f : 0.01f))));
-                client.options.setSoundVolume(slider.getCategory(), slider.getVolume());
+                client.options.setSoundVolume(slider.getCategory(), (float) slider.getVolume());
                 client.options.save();
                 ((ButtonWidget) sliderWidgetHelper).message = slider.getCategoryName() + ": " + ((SoundsScreenAccessor) client.currentScreen).callGetVolume(slider.getCategory());
             }
