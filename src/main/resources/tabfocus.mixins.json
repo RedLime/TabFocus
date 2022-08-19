@@ -3,18 +3,13 @@
   "minVersion": "0.8",
   "package": "com.redlimerl.tabfocus.mixins",
   "compatibilityLevel": "JAVA_8",
-  "mixins": [],
   "client": [
-    "accessor.ControlsOptionsScreenAccessor",
-    "accessor.GameOptionAccessor",
-    "accessor.SoundButtonWidgetAccessor",
-    "accessor.SoundsScreenAccessor",
     "CreateWorldScreenMixin",
     "ScreenMixin",
     "WorldListWidgetMixin",
     "widget.ButtonWidgetMixin",
-    "widget.TextFieldWidgetMixin",
-    "widget.OptionSliderWidgetMixin"
+    "widget.OptionSliderWidgetMixin",
+    "widget.TextFieldWidgetMixin"
   ],
   "injectors": {
     "defaultRequire": 1
