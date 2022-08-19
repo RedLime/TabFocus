@@ -23,17 +23,17 @@ public abstract class ButtonWidgetMixin extends DrawableHelper {
 
     @Shadow public boolean active;
 
-    @Inject(method = "render", at = @At("HEAD"))
+    @Inject(method = "method_891", at = @At("HEAD"))
     public void onRender(CallbackInfo ci) {
         FocusableWidget.initWidget(this, () -> this.visible && this.active);
     }
 
-    @ModifyVariable(method = "render", at = @At("HEAD"), ordinal = 0, argsOnly = true)
+    @ModifyVariable(method = "method_891", at = @At("HEAD"), ordinal = 0, argsOnly = true)
     public int renderMouseX(int mouseX) {
         return FOCUSED_WIDGET != null && FOCUSED_WIDGET.isEquals(this) ? this.x : mouseX;
     }
 
-    @ModifyVariable(method = "render", at = @At("HEAD"), ordinal = 1, argsOnly = true)
+    @ModifyVariable(method = "method_891", at = @At("HEAD"), ordinal = 1, argsOnly = true)
     public int renderMouseY(int mouseY) {
         return FOCUSED_WIDGET != null && FOCUSED_WIDGET.isEquals(this) ? this.y : mouseY;
     }

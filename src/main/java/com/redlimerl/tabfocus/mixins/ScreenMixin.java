@@ -4,17 +4,14 @@ import com.redlimerl.tabfocus.CoolGuyOptionSlider;
 import com.redlimerl.tabfocus.CoolPeopleListWidget;
 import com.redlimerl.tabfocus.FocusableWidget;
 import com.redlimerl.tabfocus.mixins.accessor.ControlsOptionsScreenAccessor;
-import com.redlimerl.tabfocus.mixins.accessor.SoundButtonWidgetAccessor;
-import com.redlimerl.tabfocus.mixins.accessor.SoundsScreenAccessor;
-import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.class_394;
 import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.screen.SoundsScreen;
 import net.minecraft.client.gui.screen.options.ControlsOptionsScreen;
 import net.minecraft.client.gui.screen.world.SelectWorldScreen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.ListWidget;
-import net.minecraft.client.gui.widget.OptionSliderWidget;
 import org.lwjgl.input.Keyboard;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -32,12 +29,12 @@ public abstract class ScreenMixin {
 
     @Shadow protected abstract void buttonClicked(ButtonWidget button);
 
-    @Shadow protected MinecraftClient client;
+    @Shadow protected Minecraft field_1229;
 
     @Shadow private ButtonWidget prevClickedButton;
 
     @SuppressWarnings("ConstantConditions")
-    @Inject(method = "handleKeyboard", at = @At("HEAD"), cancellable = true)
+    @Inject(method = "method_1040", at = @At("HEAD"), cancellable = true)
     public void onKeyPressed(CallbackInfo ci) {
         if (Keyboard.getEventKeyState()) {
             int keyCode = Keyboard.getEventKey();
@@ -63,14 +60,16 @@ public abstract class ScreenMixin {
             else if ((keyCode == 28 || keyCode == 156)) {
                 ButtonWidget button = FocusableWidget.getWidgetOrNull(FOCUSED_BUTTON_ORDER, ButtonWidget.class);
                 if (button != null) {
-                    if (client.currentScreen instanceof ControlsOptionsScreen && ((ControlsOptionsScreen) client.currentScreen).selectedKeyBinding == null) {
-                        ((ControlsOptionsScreenAccessor) client.currentScreen).getKeyBindingListWidget().mouseClicked(button.x, button.y, keyCode);
-                        if (((ControlsOptionsScreen) client.currentScreen).selectedKeyBinding != null) {
+                    if (field_1229.currentScreen instanceof ControlsOptionsScreen && ((ControlsOptionsScreenAccessor) field_1229.currentScreen).getSelectedKeyBinding() == -1) {
+                        this.buttonClicked(button);
+                        if (field_1229.currentScreen instanceof ControlsOptionsScreen && ((ControlsOptionsScreenAccessor) field_1229.currentScreen).getSelectedKeyBinding() != -1) {
                             ci.cancel();
-                            return;
+                        } else {
+                            this.field_1229.soundSystem.playSound("random.click", 1.0F, 1.0F);
                         }
+                        return;
                     }
-                    button.playDownSound(this.client.getSoundManager());
+                    this.field_1229.soundSystem.playSound("random.click", 1.0F, 1.0F);
                     this.buttonClicked(button);
                 }
                 ListWidget worldList = FocusableWidget.getWidgetOrNull(FOCUSED_BUTTON_ORDER, ListWidget.class);
@@ -83,15 +82,9 @@ public abstract class ScreenMixin {
             // Press allow key (for Slider widget)
             else if ((keyCode == 203 || keyCode == 205) && FOCUSED_BUTTON_ORDER != -1) {
                 DrawableHelper sliderWidgetHelper = this.prevClickedButton != null ? this.prevClickedButton : FocusableWidget.getWidgetOrNull(FOCUSED_BUTTON_ORDER, DrawableHelper.class);
-                if (sliderWidgetHelper instanceof OptionSliderWidget) {
-                    OptionSliderWidget sliderWidget = (OptionSliderWidget) sliderWidgetHelper;
+                if (sliderWidgetHelper instanceof class_394) {
+                    class_394 sliderWidget = (class_394) sliderWidgetHelper;
                     ((CoolGuyOptionSlider) sliderWidget).moveValue(keyCode == 203);
-                } else if (client.currentScreen instanceof SoundsScreen && sliderWidgetHelper != null && ((ButtonWidget) sliderWidgetHelper).id != 200) {
-                    SoundButtonWidgetAccessor slider = ((SoundButtonWidgetAccessor) sliderWidgetHelper);
-                    slider.setVolume(Math.min(1, Math.max(0, slider.getVolume() + (keyCode == 203 ? -0.01f : 0.01f))));
-                    client.options.setSoundVolume(slider.getCategory(), slider.getVolume());
-                    client.options.save();
-                    ((ButtonWidget) sliderWidgetHelper).message = slider.getCategoryName() + ": " + ((SoundsScreenAccessor) client.currentScreen).callGetVolume(slider.getCategory());
                 }
             }
 
@@ -111,7 +104,7 @@ public abstract class ScreenMixin {
         }
     }
 
-    @Inject(method = "init(Lnet/minecraft/client/MinecraftClient;II)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/Screen;init()V", shift = At.Shift.BEFORE))
+    @Inject(method = "method_1028(Lnet/minecraft/client/Minecraft;II)V", at = @At("HEAD"))
     public void onInit(CallbackInfo ci) {
         clear();
     }
@@ -133,13 +126,13 @@ public abstract class ScreenMixin {
         //this.client.textRenderer.draw(Integer.toString(FOCUSED_BUTTON_ORDER), 10, 10, -1);
     }
 
-    @Redirect(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/widget/ButtonWidget;render(Lnet/minecraft/client/MinecraftClient;II)V"))
-    public void buttonRender(ButtonWidget instance, MinecraftClient client, int mouseX, int mouseY) {
+    @Redirect(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/widget/ButtonWidget;method_891(Lnet/minecraft/client/Minecraft;II)V"))
+    public void buttonRender(ButtonWidget instance, Minecraft client, int mouseX, int mouseY) {
         FocusableWidget.initWidget(instance, () -> instance.visible && instance.active);
         if (FOCUSED_WIDGET != null && FOCUSED_WIDGET.isEquals(instance)) {
-            instance.render(client, instance.x, instance.y);
+            instance.method_891(client, instance.x, instance.y);
         } else {
-            instance.render(client, mouseX, mouseY);
+            instance.method_891(client, mouseX, mouseY);
         }
     }
 }

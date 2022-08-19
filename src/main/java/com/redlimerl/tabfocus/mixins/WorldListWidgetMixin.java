@@ -8,24 +8,24 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-@Mixin(targets = "net.minecraft.class_392")
-public abstract class WorldListWidgetMixin implements CoolPeopleListWidget {
+@Mixin(targets = "net/minecraft/client/class_392")
+abstract class WorldListWidgetMixin implements CoolPeopleListWidget {
 
     @Shadow protected abstract int getEntryCount();
 
-    @Shadow protected abstract void selectEntry(int index, boolean bl, int lastMouseX, int lastMouseY);
+    @Shadow protected abstract void method_1057(int index, boolean bl);
 
     private int lastIndex = -1;
 
-    @Inject(method = "<init>", at = @At("TAIL"))
+    @Inject(method = "<init>(Lnet/minecraft/client/gui/screen/world/SelectWorldScreen;)V", at = @At("TAIL"))
     public void initWorldWidget(CallbackInfo ci) {
         FocusableWidget.initWidget(this, () -> this.getEntryCount() > 0,
-                () -> this.selectEntry(0, false, 0, 0),
+                () -> this.method_1057(0, false),
                 () -> {});
     }
 
-    @Inject(method = "selectEntry", at = @At("HEAD"))
-    public void onSelect(int index, boolean bl, int lastMouseX, int lastMouseY, CallbackInfo ci) {
+    @Inject(method = "method_1057", at = @At("HEAD"))
+    public void onSelect(int index, boolean par2, CallbackInfo ci) {
         lastIndex = index;
     }
 
@@ -35,12 +35,12 @@ public abstract class WorldListWidgetMixin implements CoolPeopleListWidget {
         int idx = lastIndex + (isUp ? -1 : 1);
         if (idx < 0) idx = this.getEntryCount() - 1;
         if (idx >= this.getEntryCount()) idx = 0;
-        this.selectEntry(idx, false, 0, 0);
+        this.method_1057(idx, false);
     }
 
     @Override
     public void clickElement() {
         if (this.getEntryCount() == 0 && lastIndex == -1) return;
-        this.selectEntry(lastIndex, true, 0, 0);
+        this.method_1057(lastIndex, true);
     }
 }
